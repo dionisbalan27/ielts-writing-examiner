@@ -7,6 +7,7 @@ A full-stack MVP web app for IELTS writing assessment and feedback.
 - Backend: Node.js + Express
 - Database: PostgreSQL
 - Authentication: bcryptjs password hashing + JWT
+- Optional scoring: OpenAI-compatible API with deterministic fallback
 
 ## Features
 - Login and registration
@@ -33,6 +34,8 @@ A full-stack MVP web app for IELTS writing assessment and feedback.
 6. Start the app:
    `npm start`
 7. Open `http://localhost:3000`.
+
+To enable model-based scoring, add `OPENAI_API_KEY` to `.env`. You can optionally set `OPENAI_MODEL` and `OPENAI_BASE_URL`. Without a key, the app uses its local rubric heuristic and marks reports with `provider: heuristic`.
 
 The server creates the required PostgreSQL tables automatically on startup and seeds the demo account. The current scoring engine is a deterministic IELTS-style heuristic, not an official examiner or a replacement for a certified IELTS assessment.
 

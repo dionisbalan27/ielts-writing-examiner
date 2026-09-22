@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const { pool } = require('./database');
 const { validateRegister, validateLogin } = require('./validators');
-const { analyzeWriting } = require('./analysis');
+const { analyzeWithAI } = require('./aiScoring');
 const { createToken, requireAuth } = require('./auth');
 
 const router = express.Router();
@@ -79,7 +79,7 @@ router.post('/analyze', requireAuth, async (req, res, next) => {
     const user = userResult.rows[0];
     if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
 
-    const feedback = analyzeWriting({ taskType, topic, answer, targetBand });
+    const feedback = await analyzeWithAI({ taskType, topic, answer, targetBand });
     const result = await pool.query(
       `INSERT INTO reports
        (id, user_id, user_name, task_type, topic, answer, file_name, target_band, feedback)
