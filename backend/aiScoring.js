@@ -60,6 +60,7 @@ async function requestAiScore(input) {
 
   const response = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
     method: 'POST',
+    signal: AbortSignal.timeout(Number(process.env.AI_TIMEOUT_MS || 20000)),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`

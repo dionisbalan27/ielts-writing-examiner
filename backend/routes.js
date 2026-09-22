@@ -75,6 +75,9 @@ router.post('/analyze', requireAuth, async (req, res, next) => {
     if (!taskType || !topic || !answer) {
       return res.status(400).json({ success: false, message: 'Task type, topic, and answer are required.' });
     }
+    if (String(topic).length > 5000 || String(answer).length > 30000) {
+      return res.status(413).json({ success: false, message: 'Topic or answer is too long.' });
+    }
     const userResult = await pool.query('SELECT id, name FROM users WHERE id = $1', [req.auth.sub]);
     const user = userResult.rows[0];
     if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
