@@ -1,7 +1,10 @@
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const apiRoutes = require('./routes');
+const { initializeDatabase } = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +18,13 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`IELTS app running on http://localhost:${PORT}`);
-});
+initializeDatabase()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`IELTS app running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Database initialization failed:', error.message);
+    process.exit(1);
+  });

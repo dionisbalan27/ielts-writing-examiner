@@ -1,6 +1,7 @@
 const state = {
   selectedTask: 'task1_academic',
   currentUser: null,
+  token: null,
   report: null,
   history: []
 };
@@ -40,6 +41,12 @@ function countWords(text = '') {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
 }
 
+async function apiFetch(url, options = {}) {
+  const headers = { ...(options.headers || {}) };
+  if (state.token) headers.Authorization = `Bearer ${state.token}`;
+  return fetch(url, { ...options, headers });
+}
+
 function renderHistory() {
   if (!state.currentUser) {
     historyList.innerHTML = '<p class="empty-state">Login first to view history.</p>';
@@ -76,7 +83,7 @@ async function loadHistory() {
   if (!state.currentUser) return;
 
   try {
-    const response = await fetch(`/api/history?userId=${state.currentUser.id}`);
+    const response = await apiFetch('/api/history');
     const result = await response.json();
     state.history = result.success ? result.reports : [];
     renderHistory();
@@ -169,6 +176,7 @@ async function handleLogin(event) {
     }
 
     state.currentUser = result.user;
+    state.token = result.token;
     userNameDisplay.textContent = state.currentUser.name;
     setAuthMessage('');
     loginForm.reset();
@@ -181,6 +189,7 @@ async function handleLogin(event) {
 
 function handleLogout() {
   state.currentUser = null;
+  state.token = null;
   state.history = [];
   renderHistory();
   showScreen(authScreen);
@@ -219,7 +228,7 @@ async function handleAnalyze() {
   };
 
   try {
-    const response = await fetch('/api/analyze', {
+    const response = await apiFetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
