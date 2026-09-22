@@ -1,0 +1,14 @@
+{
+  "name": "ielts-writing-examiner-mvp",
+  "version": "1.0.0",
+  "description": "IELTS writing examiner MVP with frontend and backend",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

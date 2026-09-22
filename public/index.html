@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IELTS Writing Examiner</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="auth-screen" class="screen active">
+      <div class="auth-shell">
+        <div class="auth-panel left-panel">
+          <div class="brand">
+            <div class="brand-icon">✍️</div>
+            <span>IELTS Writing Examiner</span>
+          </div>
+
+          <h1>Instant IELTS writing feedback for every student.</h1>
+          <p>
+            Analyze writing, track progress, and receive actionable feedback based on IELTS criteria.
+          </p>
+
+          <div class="feature-list">
+            <div><span>✅</span> Overall band scoring</div>
+            <div><span>✅</span> Task 1 and Task 2 analysis</div>
+            <div><span>✅</span> Grammar and vocabulary notes</div>
+            <div><span>✅</span> Revision suggestion</div>
+          </div>
+        </div>
+
+        <div class="auth-panel card-panel">
+          <div class="tab-switch">
+            <button class="tab-btn active" data-tab="login">Login</button>
+            <button class="tab-btn" data-tab="register">Register</button>
+          </div>
+
+          <form id="login-form" class="auth-form active">
+            <h2>Welcome back</h2>
+            <div class="demo-box">
+              <strong>Demo account</strong>
+              <span>admin@ielts.com / admin123</span>
+            </div>
+            <label>
+              Email
+              <input type="email" id="login-email" required placeholder="you@example.com" />
+            </label>
+            <label>
+              Password
+              <input type="password" id="login-password" required placeholder="••••••••" />
+            </label>
+            <button type="button" id="demo-login-btn" class="secondary-btn wide-btn">Use demo login</button>
+            <button type="submit" class="primary-btn">Login</button>
+          </form>
+
+          <form id="register-form" class="auth-form">
+            <h2>Create account</h2>
+            <label>
+              Full name
+              <input type="text" id="register-name" required placeholder="John Doe" />
+            </label>
+            <label>
+              Email
+              <input type="email" id="register-email" required placeholder="john@example.com" />
+            </label>
+            <label>
+              Password
+              <input type="password" id="register-password" required placeholder="Minimum 6 characters" />
+            </label>
+            <button type="submit" class="primary-btn">Register</button>
+          </form>
+
+          <p id="auth-message" class="auth-message"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="dashboard-screen" class="screen">
+      <header class="topbar">
+        <div class="brand-box">
+          <div class="brand-icon small">✍️</div>
+          <span>IELTS Writing Examiner</span>
+        </div>
+
+        <div class="user-box">
+          <span id="user-name">User</span>
+          <button id="logout-btn" class="secondary-btn">Logout</button>
+        </div>
+      </header>
+
+      <main class="content-grid">
+        <section class="main-panel">
+          <div class="panel-header">
+            <h2>Submit writing</h2>
+          </div>
+
+          <div class="task-grid">
+            <button class="task-card active" data-task="task1_academic">
+              <span>Task 1</span>
+              <small>Academic</small>
+            </button>
+            <button class="task-card" data-task="task1_general">
+              <span>Task 1</span>
+              <small>General</small>
+            </button>
+            <button class="task-card" data-task="task2">
+              <span>Task 2</span>
+              <small>Essay</small>
+            </button>
+          </div>
+
+          <div class="field-group">
+            <label for="student-name">Student name</label>
+            <input id="student-name" type="text" placeholder="Optional" />
+          </div>
+
+          <div class="field-group">
+            <label for="topic-input">Question topic</label>
+            <textarea id="topic-input" rows="3" placeholder="Paste the writing prompt here..."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label for="file-input">Upload image/file (optional)</label>
+            <input id="file-input" type="file" accept="image/*,.pdf,.doc,.docx,.txt" />
+          </div>
+
+          <div class="field-group">
+            <label for="answer-input">Your response</label>
+            <textarea id="answer-input" rows="12" placeholder="Write your IELTS response here..."></textarea>
+          </div>
+
+          <div class="submission-row">
+            <div class="target-box">
+              <label for="target-band">Target band</label>
+              <select id="target-band">
+                <option value="6">6.0</option>
+                <option value="6.5">6.5</option>
+                <option value="7" selected>7.0</option>
+                <option value="7.5">7.5</option>
+                <option value="8">8.0</option>
+                <option value="8.5">8.5</option>
+                <option value="9">9.0</option>
+              </select>
+            </div>
+
+            <div class="counter-box">
+              <strong id="word-count">0</strong>
+              <span>words</span>
+            </div>
+          </div>
+
+          <button id="analyze-btn" class="primary-btn wide">Analyze my writing</button>
+        </section>
+
+        <aside class="side-panel">
+          <div class="panel-header">
+            <h2>History</h2>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </aside>
+      </main>
+    </div>
+
+    <div id="result-screen" class="screen">
+      <header class="topbar result-topbar">
+        <div class="brand-box">
+          <div class="brand-icon small">✍️</div>
+          <span>IELTS Writing Examiner</span>
+        </div>
+
+        <div class="result-actions">
+          <button id="back-to-dashboard" class="secondary-btn">Back</button>
+        </div>
+      </header>
+
+      <main class="result-layout">
+        <section class="result-left panel-card">
+          <h3>Prompt</h3>
+          <div id="result-topic" class="result-box"></div>
+
+          <h3>Student response</h3>
+          <div id="result-answer" class="result-box large"></div>
+        </section>
+
+        <section class="result-right panel-card">
+          <div class="score-head">
+            <div>
+              <span class="section-tag">Overall Band</span>
+              <h2 id="overall-score">0.0</h2>
+            </div>
+            <div class="score-target">
+              <span>Target</span>
+              <strong id="target-score-display">7.0</strong>
+            </div>
+          </div>
+
+          <div class="criteria-grid">
+            <div class="criteria-card">
+              <span>Task Achievement</span>
+              <strong id="task-achievement-score">0.0</strong>
+            </div>
+            <div class="criteria-card">
+              <span>Coherence</span>
+              <strong id="coherence-score">0.0</strong>
+            </div>
+            <div class="criteria-card">
+              <span>Lexical</span>
+              <strong id="lexical-score">0.0</strong>
+            </div>
+            <div class="criteria-card">
+              <span>Grammar</span>
+              <strong id="grammar-score">0.0</strong>
+            </div>
+          </div>
+
+          <div class="feedback-box success-box">
+            <h4>Strengths</h4>
+            <ul id="strengths-list"></ul>
+          </div>
+
+          <div class="feedback-box warning-box">
+            <h4>Areas to improve</h4>
+            <ul id="improvement-list"></ul>
+          </div>
+
+          <div class="feedback-box info-box">
+            <h4>AI summary</h4>
+            <p id="summary-text"></p>
+          </div>
+
+          <div class="feedback-box revision-box">
+            <h4>Suggested revised version</h4>
+            <p id="revised-text"></p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

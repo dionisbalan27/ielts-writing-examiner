@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Writing Examiner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        h1, h2, h3, .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+        .dotted-bg {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* Circular Gauge Styles */
+        .flex-wrapper {
+            display: flex;
+            flex-flow: row nowrap;
+        }
+        .single-chart {
+            width: 150px;
+            justify-content: space-around;
+        }
+        .circular-chart {
+            display: block;
+            margin: 10px auto;
+            max-width: 80%;
+            max-height: 250px;
+        }
+        .circle-bg {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 3.8;
+        }
+        .circle {
+            fill: none;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            animation: progress 1s ease-out forwards;
+        }
+        @keyframes progress {
+            0% { stroke-dasharray: 0 100; }
+        }
+        .circular-chart.blue .circle {
+            stroke: #3b82f6;
+        }
+        .percentage {
+            fill: #1e293b;
+            font-family: 'Inter', sans-serif;
+            font-weight: bold;
+            font-size: 0.5em;
+            text-anchor: middle;
+        }
+
+        /* Custom Scrollbar for textareas/scroll areas */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        .task-card-active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center cursor-pointer" onclick="switchView('home')">
+                    <i class="fa-solid fa-pen text-blue-600 text-xl mr-3"></i>
+                    <span class="serif-font text-2xl font-bold text-slate-900 tracking-tight">IELTS Writing Examiner</span>
+                </div>
+                <div class="flex space-x-4">
+                    <button class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors border border-slate-200">History</button>
+                    <button class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors border border-slate-200">About & FAQ</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- HOME VIEW -->
+        <div id="view-home" class="view-section flex flex-col items-center justify-center pt-10">
+            <div class="text-center max-w-3xl mb-12">
+                <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-6 leading-tight">Get Instant, AI-Powered Feedback</h1>
+                <p class="text-lg text-slate-600 mb-4 font-medium">Upload your IELTS Task 1 or Task 2 writing and get a detailed score report with sentence-by-sentence analysis in seconds.</p>
+                <a href="#" class="text-slate-500 underline text-sm hover:text-slate-800">See a sample report</a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-10 w-full max-w-2xl dotted-bg flex flex-col items-center justify-center relative overflow-hidden">
+                <div class="absolute top-4 right-4 opacity-20">
+                    <i class="fa-solid fa-file-signature text-6xl text-slate-400"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-slate-900 mb-4 relative z-10">Start Assessment</h2>
+                <p class="text-slate-600 mb-8 text-center relative z-10">Analyze your writing against official IELTS criteria.</p>
+                <button onclick="switchView('submit')" class="relative z-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-300 transform hover:-translate-y-0.5">
+                    Analyze My Writing
+                </button>
+            </div>
+        </div>
+
+        <!-- SUBMIT VIEW -->
+        <div id="view-submit" class="view-section hidden max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-900 serif-font">Submit Your Writing</h2>
+                <button onclick="switchView('home')" class="text-slate-600 hover:text-slate-900 text-sm font-medium flex items-center">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Back to options
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                
+                <!-- Task Selection -->
+                <div class="mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="task-card border border-slate-300 rounded-lg p-4 cursor-pointer hover:border-blue-500 transition-colors" onclick="selectTask(this, 'task1_academic')">
+                            <div class="flex items-center mb-2">
+                                <div class="bg-blue-100 p-2 rounded-md mr-3 text-blue-600"><i class="fa-solid fa-chart-bar"></i></div>
+                                <h3 class="font-bold text-slate-800">Writing Task 1</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 ml-10">(Academic) Analyze a chart, map, or diagram.</p>
+                        </div>
+                        <div class="task-card border border-slate-300 rounded-lg p-4 cursor-pointer hover:border-blue-500 transition-colors" onclick="selectTask(this, 'task1_general')">
+                            <div class="flex items-center mb-2">
+                                <div class="bg-green-100 p-2 rounded-md mr-3 text-green-600"><i class="fa-regular fa-envelope"></i></div>
+                                <h3 class="font-bold text-slate-800">Writing Task 1</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 ml-10">(General Training) Write a letter based on a situation.</p>
+                        </div>
+                        <div class="task-card border border-slate-300 rounded-lg p-4 cursor-pointer hover:border-blue-500 transition-colors" onclick="selectTask(this, 'task2')">
+                            <div class="flex items-center mb-2">
+                                <div class="bg-purple-100 p-2 rounded-md mr-3 text-purple-600"><i class="fa-regular fa-file-lines"></i></div>
+                                <h3 class="font-bold text-slate-800">Writing Task 2</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 ml-10">Write an essay on an academic or general topic.</p>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3 text-sm text-slate-500 font-medium">Need a refresher on Task criteria?</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Left Column: Inputs -->
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1">Student Name <span class="text-slate-400 font-normal">(Optional - for report export)</span></label>
+                            <input type="text" id="studentName" placeholder="e.g. John Doe" class="w-full border border-slate-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="block text-sm font-bold text-slate-700">Question Topic</label>
+                                <span class="text-xs font-bold text-slate-500 cursor-pointer hover:text-slate-800">Need a Topic?</span>
+                            </div>
+                            <!-- Prompt textarea made explicitly empty -->
+                            <textarea id="promptInput" rows="4" placeholder="Select a task above, then paste your prompt here..." class="w-full border border-slate-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-sm font-bold text-slate-700">Upload Image</label>
+                                <i class="fa-solid fa-circle-info text-slate-400 text-xs" title="Upload charts, graphs, or letters if applicable"></i>
+                            </div>
+                            <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:bg-slate-50 transition-colors cursor-pointer">
+                                <i class="fa-regular fa-image text-3xl text-slate-400 mb-2"></i>
+                                <p class="text-sm text-blue-600 font-medium">UPLOAD A FILE <span class="text-slate-500 font-normal">or drag and drop</span></p>
+                                <p class="text-xs text-slate-400 mt-1">PNG, JPG, GIF up to 4MB</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Response Area -->
+                    <div class="flex flex-col h-full">
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Your Response</label>
+                        <!-- Essay textarea made explicitly empty -->
+                        <textarea id="essayInput" rows="15" placeholder="Enter your full response here..." class="w-full border border-slate-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-grow resize-none"></textarea>
+                        
+                        <div class="flex justify-between items-center mt-3">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-bullseye text-pink-500"></i>
+                                <span class="text-sm font-bold text-slate-700">Target Score:</span>
+                                <select id="targetScore" class="border border-slate-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="6.0">6.0</option>
+                                    <option value="6.5">6.5</option>
+                                    <option value="7.0" selected>7.0</option>
+                                    <option value="7.5">7.5</option>
+                                    <option value="8.0">8.0</option>
+                                    <option value="8.5">8.5</option>
+                                    <option value="9.0">9.0</option>
+                                </select>
+                            </div>
+                            <div class="text-sm font-bold text-slate-700">
+                                <span id="wordCount">0</span> words <span class="text-slate-500 font-normal text-xs">(min. 150 recommended)</span>
+                            </div>
+                        </div>
+
+                        <button onclick="startAnalysis()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow transition duration-200">
+                            Get Feedback
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOADING VIEW -->
+        <div id="view-loading" class="view-section hidden flex items-center justify-center min-h-[60vh]">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-12 w-full max-w-3xl dotted-bg flex flex-col items-center text-center">
+                <div class="relative w-24 h-32 border-2 border-slate-800 rounded-md mb-6 bg-white overflow-hidden flex flex-col p-3">
+                    <div class="w-full h-1 bg-blue-500 absolute top-0 left-0 right-0 z-10" style="animation: scan 2s ease-in-out infinite alternate;"></div>
+                    <div class="w-full h-2 bg-slate-200 rounded mb-2 mt-4"></div>
+                    <div class="w-3/4 h-2 bg-slate-200 rounded mb-2"></div>
+                    <div class="w-full h-2 bg-slate-200 rounded mb-2"></div>
+                    <div class="w-5/6 h-2 bg-slate-200 rounded"></div>
+                    <style>
+                        @keyframes scan {
+                            0% { transform: translateY(0); }
+                            100% { transform: translateY(110px); }
+                        }
+                    </style>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 serif-font mb-4 tracking-widest uppercase">AI Examiner is Thinking</h2>
+                <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-1.5 rounded-full text-sm font-medium inline-block min-w-[200px]" id="loadingText">
+                    Identifying key strengths...
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS VIEW -->
+        <div id="view-results" class="view-section hidden flex flex-col lg:flex-row gap-6">
+            
+            <!-- Left Panel: Original Input -->
+            <div class="w-full lg:w-1/3 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-[calc(100vh-8rem)] sticky top-20">
+                <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl">
+                    <h2 class="font-bold text-lg serif-font">Your Writing</h2>
+                    <span class="text-xs text-slate-500 bg-white px-2 py-1 rounded border border-slate-200">SCROLLABLE</span>
+                </div>
+                
+                <div class="p-4 overflow-y-auto flex-grow">
+                    <div class="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-2">Writing Prompt</h3>
+                        <p class="text-sm italic text-slate-700" id="result-prompt">
+                            <!-- Populated dynamically from user input -->
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-2">Your Response</h3>
+                        <div class="text-sm text-slate-800 leading-relaxed space-y-4" id="result-essay">
+                            <!-- Populated dynamically from user input -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Analysis Tabs (Simulated Data) -->
+            <div class="w-full lg:w-2/3 flex flex-col h-[calc(100vh-8rem)]">
+                
+                <!-- Tab Navigation -->
+                <div class="bg-white rounded-t-xl shadow-sm border border-slate-200 border-b-0 px-2 pt-2 flex flex-wrap gap-1 sm:gap-4 overflow-x-auto">
+                    <button onclick="switchTab('overview')" id="tab-btn-overview" class="tab-btn tab-active px-4 py-3 text-sm font-medium text-slate-500 flex flex-col items-center min-w-[80px]">
+                        <i class="fa-solid fa-chart-pie mb-1 text-lg"></i> Overview
+                    </button>
+                    <button onclick="switchTab('breakdown')" id="tab-btn-breakdown" class="tab-btn px-4 py-3 text-sm font-medium text-slate-500 flex flex-col items-center hover:text-slate-800 transition-colors min-w-[80px]">
+                        <i class="fa-solid fa-layer-group mb-1 text-lg"></i> Breakdown
+                    </button>
+                    <button onclick="switchTab('proofreader')" id="tab-btn-proofreader" class="tab-btn px-4 py-3 text-sm font-medium text-slate-500 flex flex-col items-center hover:text-slate-800 transition-colors min-w-[80px]">
+                        <i class="fa-solid fa-magnifying-glass mb-1 text-lg"></i> Proofreader
+                    </button>
+                    <button onclick="switchTab('revised')" id="tab-btn-revised" class="tab-btn px-4 py-3 text-sm font-medium text-slate-500 flex flex-col items-center hover:text-slate-800 transition-colors min-w-[80px]">
+                        <i class="fa-regular fa-file-lines mb-1 text-lg"></i> Revised
+                    </button>
+                    
+                    <div class="flex-grow"></div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex items-center space-x-2 pb-2 pr-2">
+                        <button class="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100 flex items-center">
+                            <i class="fa-regular fa-file-word mr-1"></i> DOCX
+                        </button>
+                        <button class="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 border border-red-200 rounded hover:bg-red-100 flex items-center">
+                            <i class="fa-regular fa-file-pdf mr-1"></i> PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Content Area -->
+                <div class="bg-white rounded-b-xl shadow-sm border border-slate-200 flex-grow overflow-y-auto p-4 sm:p-6" style="border-top: none;">
+                    
+                    <!-- OVERVIEW TAB -->
+                    <div id="tab-overview" class="tab-content space-y-6">
+                        <!-- Header with Name -->
+                        <div class="flex justify-between items-center border border-slate-200 p-3 rounded-lg bg-slate-50">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Student Name</span>
+                            <span class="font-bold text-slate-800" id="display-student-name">Anonymous</span>
+                        </div>
+
+                        <!-- Score Gauge -->
+                        <div class="flex flex-col items-center py-4">
+                            <h3 class="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Overall Band Score</h3>
+                            <div class="single-chart">
+                                <svg viewBox="0 0 36 36" class="circular-chart blue">
+                                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <!-- stroke-dasharray format: percentage, 100 -->
+                                    <path class="circle" stroke-dasharray="61, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <text x="18" y="20.35" class="percentage">5.5</text>
+                                </svg>
+                            </div>
+                            <p class="font-bold text-lg mt-2 text-slate-800">Modest User</p>
+                        </div>
+
+                        <!-- Gap Analysis -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden">
+                            <div class="bg-slate-800 text-white p-3 flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-bullseye text-pink-500"></i>
+                                    <span class="font-bold">TARGET GAP ANALYSIS</span>
+                                </div>
+                                <span class="bg-slate-700 text-white text-xs px-2 py-1 rounded font-mono">Gap -1.5</span>
+                            </div>
+                            <div class="p-6 flex flex-col sm:flex-row items-center gap-6 bg-slate-50">
+                                <!-- Circles -->
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-xs font-bold text-slate-500 mb-1 uppercase">Target</span>
+                                        <div class="w-16 h-16 rounded-full border-2 border-slate-300 border-dashed flex items-center justify-center text-xl font-bold text-slate-400" id="display-target-score">7.0</div>
+                                    </div>
+                                    <span class="text-slate-300 font-bold text-2xl">VS</span>
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-xs font-bold text-blue-600 mb-1 uppercase">Reality</span>
+                                        <div class="w-16 h-16 rounded-full border-2 border-blue-500 flex items-center justify-center text-xl font-bold text-blue-600 bg-blue-50 shadow-inner">5.5</div>
+                                    </div>
+                                </div>
+                                <!-- Text -->
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-slate-800 mb-2">Closing the Gap</h4>
+                                    <p class="text-sm text-slate-600">Your current score is 5.5, and your target is <span id="text-target-score">7.0</span>. To bridge this gap, a major shift in grammatical accuracy and cohesion is required. A Band 7 essay must have 'frequent error-free sentences' and clear, logical progression. Focus on the core mechanics of your writing.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Strengths / Areas Grid (Simulated Data) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                            <div class="border border-slate-200 rounded-lg p-4 flex flex-col justify-center items-center text-center bg-slate-50">
+                                <span class="text-xs font-bold text-slate-500 uppercase mb-1">Task Achievement</span>
+                                <span class="text-2xl font-bold text-slate-800">6.0</span>
+                            </div>
+                            <div class="border border-slate-200 rounded-lg p-4 flex flex-col justify-center items-center text-center bg-slate-50">
+                                <span class="text-xs font-bold text-slate-500 uppercase mb-1">Cohesion</span>
+                                <span class="text-2xl font-bold text-slate-800">5.0</span>
+                            </div>
+                            <div class="border border-slate-200 rounded-lg p-4 flex flex-col justify-center items-center text-center bg-slate-50">
+                                <span class="text-xs font-bold text-slate-500 uppercase mb-1">Lexical</span>
+                                <span class="text-2xl font-bold text-slate-800">6.0</span>
+                            </div>
+                            <div class="border border-slate-200 rounded-lg p-4 flex flex-col justify-center items-center text-center bg-slate-50">
+                                <span class="text-xs font-bold text-slate-500 uppercase mb-1">Grammar</span>
+                                <span class="text-2xl font-bold text-slate-800">5.0</span>
+                            </div>
+                        </div>
+
+                        <!-- Text feedback (Simulated Data) -->
+                        <div class="border-l-4 border-green-500 bg-green-50 p-4 rounded-r-lg">
+                            <h4 class="font-bold text-green-800 flex items-center mb-2"><i class="fa-solid fa-check-circle mr-2"></i> STRENGTHS</h4>
+                            <p class="text-sm text-green-700">You successfully addressed the core topic presented in the prompt. You maintained a clear position throughout the response and attempted to use some subject-specific vocabulary.</p>
+                        </div>
+                        <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded-r-lg">
+                            <h4 class="font-bold text-red-800 flex items-center mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i> AREAS FOR IMPROVEMENT</h4>
+                            <p class="text-sm text-red-700">The most critical area for improvement is sentence structure and punctuation. There are several instances of run-on sentences and grammatical errors that impede readability. You also need to develop your main points with more specific, concrete examples rather than general statements.</p>
+                        </div>
+                    </div>
+
+                    <!-- BREAKDOWN TAB -->
+                    <div id="tab-breakdown" class="tab-content hidden space-y-4">
+                        <div class="p-4 bg-yellow-50 text-yellow-800 text-sm rounded-lg border border-yellow-200 mb-4">
+                            <i class="fa-solid fa-circle-info mr-2"></i> <strong>Note:</strong> The breakdown below is a simulated example to demonstrate layout functionality.
+                        </div>
+                        <!-- Accordion 1 -->
+                        <div class="border border-slate-200 rounded-lg overflow-hidden">
+                            <button class="w-full bg-slate-50 p-4 flex justify-between items-center hover:bg-slate-100 transition-colors focus:outline-none" onclick="toggleAccordion('acc-task')">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full border border-blue-500 text-blue-600 flex items-center justify-center font-bold text-sm mr-3 bg-white">6.0</div>
+                                    <h3 class="font-bold text-slate-800">Task Achievement/Response</h3>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200" id="icon-acc-task"></i>
+                            </button>
+                            <div id="acc-task" class="p-4 border-t border-slate-200 hidden bg-white">
+                                <h4 class="font-bold text-slate-800 text-sm mb-2">Diagnosis</h4>
+                                <p class="text-sm text-slate-600 mb-4">Addresses all parts of the prompt but the development of ideas is somewhat repetitive and lacks depth.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion 2 (Open by default) -->
+                        <div class="border border-slate-200 rounded-lg overflow-hidden border-l-4 border-l-blue-500 shadow-sm">
+                            <button class="w-full bg-slate-50 p-4 flex justify-between items-center hover:bg-slate-100 transition-colors focus:outline-none" onclick="toggleAccordion('acc-coh')">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full border border-orange-500 text-orange-600 flex items-center justify-center font-bold text-sm mr-3 bg-white">5.0</div>
+                                    <h3 class="font-bold text-slate-800">Coherence & Cohesion</h3>
+                                </div>
+                                <i class="fa-solid fa-chevron-up text-slate-400 transition-transform duration-200" id="icon-acc-coh"></i>
+                            </button>
+                            <div id="acc-coh" class="p-5 border-t border-slate-200 bg-white block">
+                                <h4 class="font-bold text-slate-800 text-sm mb-2">Diagnosis</h4>
+                                <p class="text-sm text-slate-600 mb-4">The text is organized into paragraphs, but internal cohesion is weak. Sentences often lack clear boundaries, relying heavily on simple conjunctions like "and".</p>
+                                
+                                <h4 class="font-bold text-slate-800 text-sm mb-2">Actions toward improvement</h4>
+                                <ul class="list-disc pl-5 text-sm text-slate-600 space-y-2">
+                                    <li>Practice writing clear, concise sentences containing one main idea.</li>
+                                    <li>Review punctuation rules (commas vs. full stops).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PROOFREADER TAB -->
+                    <div id="tab-proofreader" class="tab-content hidden">
+                        <div class="mb-4">
+                            <h3 class="font-bold text-slate-800 serif-font text-lg">Proofreader Analysis</h3>
+                            <p class="text-sm text-slate-500">Sentence-by-sentence analysis (Simulated Demo).</p>
+                        </div>
+                        <div class="overflow-x-auto rounded-lg border border-slate-200">
+                            <table class="min-w-full text-left text-sm whitespace-normal">
+                                <thead class="bg-slate-100 uppercase text-slate-600 text-xs font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-4 w-1/3">Original Issue</th>
+                                        <th class="p-4 w-1/3">Explanation</th>
+                                        <th class="p-4 w-1/3">Suggestion</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white">
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="p-4 align-top text-slate-700">
+                                            Sample grammatical error detected in input.
+                                        </td>
+                                        <td class="p-4 align-top">
+                                            <p class="text-red-600 font-medium mb-1 text-xs">Grammar</p>
+                                            <p class="text-slate-600 text-xs">Ensure subject-verb agreement in complex sentences.</p>
+                                        </td>
+                                        <td class="p-4 align-top text-green-700 font-medium">
+                                            [Corrected version of your sentence would appear here]
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- REVISED TAB -->
+                    <div id="tab-revised" class="tab-content hidden">
+                        <div class="flex items-center space-x-2 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                            <i class="fa-solid fa-wand-magic-sparkles text-blue-500 text-xl"></i>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-md">Target Score Rewrite</h3>
+                                <p class="text-xs text-slate-500">This is an AI-generated revision, upgraded to achieve your target band score of <span id="rewrite-target" class="font-bold text-blue-700">7.0</span>.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-inner text-slate-800 leading-relaxed text-sm" style="font-family: 'Merriweather', serif;">
+                            <p class="mb-4 italic text-slate-500">[In a fully functional backend version, an improved, structurally sound version of your exact essay would be generated and displayed here, demonstrating better vocabulary, cohesion, and grammatical accuracy while maintaining your original arguments.]</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Init: Word Counter & Clear Fields
+        document.addEventListener('DOMContentLoaded', () => {
+            const essayInput = document.getElementById('essayInput');
+            const promptInput = document.getElementById('promptInput');
+            
+            // Ensure fields are empty on load
+            essayInput.value = '';
+            promptInput.value = '';
+            
+            essayInput.addEventListener('input', function() {
+                const text = this.value.trim();
+                const words = text === '' ? 0 : text.split(/\s+/).length;
+                document.getElementById('wordCount').textContent = words;
+            });
+        });
+
+        // UI Interactions
+        function selectTask(element, taskId) {
+            // Reset visual states
+            document.querySelectorAll('.task-card').forEach(card => {
+                card.classList.remove('task-card-active', 'border-blue-500');
+                card.classList.add('border-slate-300');
+            });
+            
+            // Highlight selected
+            element.classList.add('task-card-active', 'border-blue-500');
+            element.classList.remove('border-slate-300');
+            
+            // Adjust placeholder text dynamically based on the exact task chosen
+            const promptArea = document.getElementById('promptInput');
+            if(taskId === 'task1_general') {
+                promptArea.placeholder = "E.g., You recently stayed in a hotel... Write a letter to the manager expressing your dissatisfaction...";
+            } else if (taskId === 'task1_academic') {
+                promptArea.placeholder = "E.g., The provided bar chart shows the percentage of households with internet access...";
+            } else {
+                promptArea.placeholder = "E.g., Some people believe that technology has made our lives more complex. To what extent do you agree or disagree?";
+            }
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(view => {
+                view.classList.add('hidden');
+            });
+            
+            const targetView = document.getElementById(`view-${viewId}`);
+            if(targetView) {
+                targetView.classList.remove('hidden');
+                if(viewId === 'results') {
+                    targetView.classList.add('flex');
+                }
+            }
+            window.scrollTo(0, 0);
+        }
+
+        // Helper function to escape HTML to prevent XSS and format newlines
+        function formatTextToHTML(text) {
+            if (!text) return "";
+            // Escape basic HTML characters
+            let escaped = text.replace(/&/g, "&amp;")
+                              .replace(/</g, "&lt;")
+                              .replace(/>/g, "&gt;");
+            // Split by double newline to create paragraphs
+            let paragraphs = escaped.split(/\n\s*\n/);
+            return paragraphs.map(p => `<p class="mb-3">${p.replace(/\n/g, '<br>')}</p>`).join('');
+        }
+
+        function startAnalysis() {
+            // 1. Get User Data
+            const targetScore = document.getElementById('targetScore').value;
+            const studentName = document.getElementById('studentName').value || 'Anonymous';
+            const essayText = document.getElementById('essayInput').value;
+            const promptText = document.getElementById('promptInput').value;
+
+            // 2. Validate
+            if(!essayText.trim()) {
+                alert("Please enter your response in the text area before submitting.");
+                return;
+            }
+
+            // 3. Inject User Data into Results Page
+            document.getElementById('display-student-name').textContent = studentName;
+            document.getElementById('display-target-score').textContent = targetScore;
+            document.getElementById('text-target-score').textContent = targetScore;
+            document.getElementById('rewrite-target').textContent = targetScore;
+
+            // Inject the EXACT text the user typed
+            const resultPromptDiv = document.getElementById('result-prompt');
+            resultPromptDiv.innerHTML = formatTextToHTML(promptText) || "<em>No prompt provided.</em>";
+
+            const resultEssayDiv = document.getElementById('result-essay');
+            resultEssayDiv.innerHTML = formatTextToHTML(essayText);
+
+            // 4. Show Loading State
+            switchView('loading');
+            
+            const loadingTexts = [
+                "Identifying key strengths...",
+                "Analyzing grammar and vocabulary...",
+                "Evaluating task achievement...",
+                "Checking coherence and cohesion...",
+                "Generating detailed report..."
+            ];
+            let textIndex = 0;
+            const textElement = document.getElementById('loadingText');
+            
+            const loadingInterval = setInterval(() => {
+                textIndex = (textIndex + 1) % loadingTexts.length;
+                textElement.textContent = loadingTexts[textIndex];
+            }, 800);
+
+            // 5. Simulate processing delay, then show results
+            setTimeout(() => {
+                clearInterval(loadingInterval);
+                switchView('results');
+                
+                // Trigger gauge animation
+                const circle = document.querySelector('.circular-chart .circle');
+                circle.style.animation = 'none';
+                circle.offsetHeight; 
+                circle.style.animation = null; 
+
+                // Make sure Overview tab is active by default
+                switchTab('overview');
+
+            }, 3500);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active', 'text-slate-800');
+                btn.classList.add('text-slate-500');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.add('tab-active', 'text-slate-800');
+            activeBtn.classList.remove('text-slate-500');
+        }
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            if(content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                content.classList.add('block');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+                content.parentElement.classList.add('border-l-4', 'border-l-blue-500', 'shadow-sm');
+            } else {
+                content.classList.remove('block');
+                content.classList.add('hidden');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+                content.parentElement.classList.remove('border-l-4', 'border-l-blue-500', 'shadow-sm');
+            }
+        }
+    </script>
+</body>
+</html>
