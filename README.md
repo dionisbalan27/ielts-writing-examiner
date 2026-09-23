@@ -3,7 +3,7 @@
 A full-stack MVP web app for IELTS writing assessment and feedback.
 
 ## Stack
-- Frontend: HTML, CSS, JavaScript
+- Frontend: React + Vite
 - Backend: Node.js + Express
 - Database: PostgreSQL
 - Authentication: bcryptjs password hashing + JWT
@@ -35,6 +35,9 @@ A full-stack MVP web app for IELTS writing assessment and feedback.
    `npm start`
 7. Open `http://localhost:3000`.
 
+## Frontend development
+Run the API with `npm start`, then run `npm run dev:frontend` in another terminal. Vite serves the React app at `http://localhost:5173` and proxies `/api` to Express. For a production-style run, use `npm run build:frontend` followed by `npm start`.
+
 To enable model-based scoring, add `OPENAI_API_KEY` to `.env`. You can optionally set `OPENAI_MODEL` and `OPENAI_BASE_URL`. Without a key, the app uses its local rubric heuristic and marks reports with `provider: heuristic`.
 
 The server creates the required PostgreSQL tables automatically on startup and seeds the demo account. The current scoring engine is a deterministic IELTS-style heuristic, not an official examiner or a replacement for a certified IELTS assessment.
@@ -53,6 +56,6 @@ The server creates the required PostgreSQL tables automatically on startup and s
 - `backend/database.js` - PostgreSQL pool and schema initialization
 - `backend/auth.js` - JWT authentication middleware
 - `.env.example` - required environment variables
-- `public/index.html` - app UI
-- `public/app.js` - frontend logic
-- `public/styles.css` - styling
+- `frontend/src/App.jsx` - React application flow
+- `frontend/src/styles.css` - React UI styling
+- `frontend/vite.config.js` - Vite development proxy

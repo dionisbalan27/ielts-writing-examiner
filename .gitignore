@@ -3,3 +3,5 @@ node_modules/
 .DS_Store
 npm-debug.log*
 data/store.json
+frontend/node_modules/
+frontend/dist/

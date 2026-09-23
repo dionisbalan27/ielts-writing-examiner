@@ -15,11 +15,12 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json({ limit: '1mb' }));
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 120, standardHeaders: 'draft-7', legacyHeaders: false }));
-app.use(express.static(path.join(__dirname, '..', 'public')));
+const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
+app.use(express.static(frontendDist));
 app.use('/api', apiRoutes);
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  res.sendFile(path.join(frontendDist, 'index.html'));
 });
 
 initializeDatabase()
