@@ -116,6 +116,12 @@ function countWords(text = '') {
     const strengths = [];
     const improvements = [];
 
+    if (coverage >= 0.2) strengths.push('Your response uses vocabulary related to the question topic.');
+    else improvements.push('Address the exact question more directly and develop each main idea.');
+    if (sentences.length >= 2 && errors === 0) strengths.push('Your sentences are separated clearly and easy to follow.');
+    else improvements.push('Review sentence boundaries and correct repeated grammar or punctuation errors.');
+    if (connectors > 0) strengths.push('You use some linking language to connect your ideas.');
+    else improvements.push('Add precise linking phrases to show relationships between ideas.');
     if (criteria.taskAchievement >= 7) strengths.push('You address the main task and keep a clear focus on the topic.');
     else improvements.push('Expand your main idea with more direct supporting examples.');
     if (criteria.coherence >= 7) strengths.push('Your ideas are generally organised in a logical order.');

@@ -7,7 +7,7 @@ A full-stack MVP web app for IELTS writing assessment and feedback.
 - Backend: Node.js + Express
 - Database: PostgreSQL
 - Authentication: bcryptjs password hashing + JWT
-- Optional scoring: OpenAI-compatible API with deterministic fallback
+- Optional scoring: free Gemini API tier, local Ollama model, OpenAI-compatible API, and deterministic fallback
 
 ## Features
 - Login and registration
@@ -38,7 +38,7 @@ A full-stack MVP web app for IELTS writing assessment and feedback.
 ## Frontend development
 Run the API with `npm start`, then run `npm run dev:frontend` in another terminal. Vite serves the React app at `http://localhost:5173` and proxies `/api` to Express. For a production-style run, use `npm run build:frontend` followed by `npm start`.
 
-To enable model-based scoring, add `OPENAI_API_KEY` to `.env`. You can optionally set `OPENAI_MODEL` and `OPENAI_BASE_URL`. Without a key, the app uses its local rubric heuristic and marks reports with `provider: heuristic`.
+For free model-based scoring, create a Gemini API key through Google AI Studio and add `GEMINI_API_KEY` to `.env`. The app marks those reports with `provider: gemini-free`. Free-tier quotas are controlled by Google and may change. Alternatively, install Ollama, run `ollama pull llama3.2:3b`, and set `OLLAMA_ENABLED=true` for fully local scoring. Without an available provider, the app uses its local rubric heuristic and marks reports with `provider: heuristic`.
 
 The server creates the required PostgreSQL tables automatically on startup and seeds the demo account. The current scoring engine is a deterministic IELTS-style heuristic, not an official examiner or a replacement for a certified IELTS assessment.
 
